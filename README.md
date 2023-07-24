@@ -25,7 +25,7 @@ and install Python and Git:
 choco install python git -y
 ```
 
-Then download nus3express:
+Then, after closing and reopening Powershell as admin, download nus3express:
 
 ```bash
 # maybe go to your downloads folder?
