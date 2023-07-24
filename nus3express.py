@@ -13,7 +13,17 @@ def start_button(selected_file):
 def open_file_dialog():
     selected_file = filedialog.askopenfilename(initialdir='.')
     if selected_file:
+        # Update the label to indicate that the program is working
+        status_var.set("Working...")
+        status_label.update()  # Update the label to show "Working..."
+
+        # Call your runner function here
         runner(selected_file)
+
+        # Reset the status label once the processing is done
+        status_var.set("")
+        status_label.update()  # Update the label to clear "Working..."
+
     exit()
 
 # Create the main application window
@@ -30,6 +40,11 @@ label.pack(pady=10)
 # Add a button to open the file dialog
 file_button = tk.Button(root, text="Select File", command=open_file_dialog)
 file_button.pack(pady=5)
+
+# Add a label to display the status
+status_var = tk.StringVar()
+status_label = tk.Label(root, textvariable=status_var)
+status_label.pack(pady=5)
 
 # Run the main event loop
 root.mainloop()
