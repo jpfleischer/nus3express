@@ -89,7 +89,7 @@ def runner(filename):
         else:
             print(f"{folder_path} does not exist.")
 
-    r = runcommand(rf'nus3audio-rs\target\release\nus3audio.exe -e idsps -- {filename}')
+    r = runcommand(rf'nus3audio-rs\target\release\nus3audio.exe -e idsps -- "{filename}"')
     if not os.path.isdir('wavs'):
         Shell.mkdir('wavs')
 
@@ -104,7 +104,7 @@ def runner(filename):
             inner = Shell.map_filename(inner).path
             outer = Shell.map_filename(outer).path
             # print(rf'.\StreamTool\vgaudio.exe {inner} {outer}')
-            r = runcommand(rf'.\StreamTool\vgaudio.exe {inner} {outer}')
+            r = runcommand(rf'.\StreamTool\vgaudio.exe "{inner}" "{outer}"')
 
     print('Converting to mp3s...')
     # Path to the folder containing the input files
@@ -127,7 +127,7 @@ def runner(filename):
             # Run FFmpeg as a system command to convert the file
             # The command is: ffmpeg -i input_file.mp3 output_file.wav
             # cmd = ["ffmpeg", "-i", input_file, output_file]
-            Shell.run(f'ffmpeg -i {input_file} {output_file}')
+            Shell.run(f'ffmpeg -i "{input_file}" "{output_file}"')
             # subprocess.run(cmd)
 
     Shell.run('start mp3s')
