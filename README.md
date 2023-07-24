@@ -37,5 +37,6 @@ cd nus3express
 Finally, run these commands:
 
 ```bash
+pip install -r requirements.txt
 python nus3express.py
 ```
