@@ -1,4 +1,4 @@
-# Welcome to nus3express
+# 🍫 nus3express
 
 This tool converts files in nus3audio to mp3s.
 
