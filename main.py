@@ -16,6 +16,21 @@ if len(sys.argv) == 1:
 if len(sys.argv) >= 2:
     filename = sys.argv[1]
 
+if filename == 'MYNUS3FILE.nus3audio':
+    sys.exit('\nYou silly goose! You have to run the command '
+             'with the name of your file at the end.\n'
+             'If you are confused, just run the command "start ." in '
+             'your Powershell.\nThe folder that comes up, is where you have '
+             'to drop your nus3audio file.\nThen run the command but '
+             'change "MYFILENAME.nus3audio" to the actual name of your '
+             'file.\n\n')
+
+if not os.path.isfile(filename):
+    sys.exit(f'\n{filename} was not found :(\nMaybe you are missing '
+                '.nus3audio at the end? Maybe you are in the wrong folder?\n'
+                'Type the command "start ." into your powershell and run it, '
+                'and move the file\ninto this folder that shows up.\n\n')
+
 def runcommand(command):
     try:
         r = Shell.run(command)
@@ -99,6 +114,7 @@ for filename in os.listdir(input_folder):
         Shell.run(f'ffmpeg -i {input_file} {output_file}')
         # subprocess.run(cmd)
 
+Shell.run('start mp3s')
 print('Done, look in mp3s folder.')
 
 
