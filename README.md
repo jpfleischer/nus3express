@@ -34,10 +34,8 @@ git clone https://github.com/jpfleischer/nus3express.git
 cd nus3express 
 ```
 
-Finally, drop the `nus3audio` folder in the nus3express folder and run
-this command:
+Finally, run these commands:
 
 ```bash
-pip install -r requirements.txt
-python main.py MYNUS3FILE.nus3audio
+python nus3express.py
 ```
