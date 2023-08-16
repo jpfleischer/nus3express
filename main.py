@@ -88,17 +88,11 @@ def runner(filename):
 
     for folder_path in ['mp3s', 'idsps', 'wavs']:
         if os.path.exists(folder_path):
-            files = os.listdir(folder_path)
-            if files:
-                print(f"Deleting files in {folder_path}...")
-                for file in files:
-                    file_path = os.path.join(folder_path, file)
-                    if os.path.isfile(file_path):
-                        os.remove(file_path)
-            else:
-                print(f"{folder_path} is already empty.")
+            print(f"Deleting {folder_path}...")
+            Shell.rmdir(folder_path)
         else:
             print(f"{folder_path} does not exist.")
+        Shell.mkdir(folder_path)
 
     r = runcommand(rf'nus3audio.exe -e idsps -- "{filename}"')
     if 'is not recognized as an internal' in r:
@@ -106,9 +100,6 @@ def runner(filename):
         Console.error('nus3audio-rs was not installed properly by nus3express.\n'
                       'Perhaps this was due to an early stoppage.\n'
                       'Please rerun the program which will reinstall nus3audio-rs.\n')
-
-    if not os.path.isdir('wavs'):
-        Shell.mkdir('wavs')
 
     files = os.listdir('idsps')
 
