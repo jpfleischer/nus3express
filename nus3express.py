@@ -28,7 +28,7 @@ def open_file_dialog():
 
 # Create the main application window
 root = tk.Tk()
-root.title("File Selection GUI")
+root.title("nus3express")
 
 # Set the default size of the GUI
 root.geometry("400x120")

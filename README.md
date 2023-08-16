@@ -25,7 +25,9 @@ and install Python and Git:
 choco install python git -y
 ```
 
-Then, after closing and reopening Powershell as admin, download nus3express:
+Then, after closing and reopening Powershell as admin, download nus3express.
+By the way, it is usually a good idea to copy and paste each line individually.
+Copying all the commands at once may lead to unknown behavior.
 
 ```bash
 # maybe go to your downloads folder?
@@ -37,6 +39,18 @@ cd nus3express
 Finally, run these commands:
 
 ```bash
+pip install -r requirements.txt
+python nus3express.py
+```
+
+## I want to update my nus3express!
+
+Assuming you downloaded it to your Downloads folder, as above, do the
+following in Powershell as admin:
+
+```bash
+cd ~/Downloads/nus3express
+git pull
 pip install -r requirements.txt
 python nus3express.py
 ```

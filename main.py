@@ -1,7 +1,9 @@
 from tqdm import tqdm
 import sys
+import requests
 import os
 from cloudmesh.common.Shell import Shell
+from cloudmesh.common.console import Console
 import subprocess
 from cloudmesh.common.systeminfo import os_is_windows
 
@@ -39,17 +41,19 @@ def runner(filename):
             return r
         except subprocess.CalledProcessError as e:
             print(e.output)
+            return str(e.output)
 
-    try:
-        r = Shell.run('rustc --version')
-    except subprocess.CalledProcessError:
-        print('Rust not found. Installing rust...')
-        r2 = Shell.run('choco install rust -y')
-        if 'not found' in r2:
-            print('Chocolatey not found. Please install chocolatey.')
-            exit()
-        else:
-            print('Rust installed.')
+    # try:
+    #     r = Shell.run('rustc --version')
+    # except subprocess.CalledProcessError:
+    #     print('Rust not found. Installing rust...')
+
+    r2 = Shell.run('choco --version')
+    if 'not found' in r2:
+        print('Chocolatey not found. Please install chocolatey.')
+        exit()
+    else:
+        print('Chocolatey installed.')
 
     try:
         r = Shell.run('ffmpeg -h')
@@ -57,12 +61,19 @@ def runner(filename):
         print('ffmpeg not found. Installing ffmpeg...')
         r2 = Shell.run('choco install ffmpeg -y')
 
-    if not os.path.isdir('nus3audio-rs'):
-        print('Installing nus3audio-rs...')
-        try:
-            Shell.run('git clone https://github.com/jam1garner/nus3audio-rs.git && cd nus3audio-rs && cargo build --release')
-        except Exception as e:
-            print(str(e.output))
+    if not os.path.isfile('nus3audio.exe'):
+        print('Downloading nus3audio...')
+        url = "https://github.com/jam1garner/nus3audio-rs/releases/download/v1.1.7/nus3audio.exe"
+        file_name = "nus3audio.exe"
+
+        response = requests.get(url)
+
+        if response.status_code == 200:
+            with open(file_name, 'wb') as file:
+                file.write(response.content)
+            print(f"Downloaded {file_name} successfully.")
+        else:
+            print("Failed to download the file.")
 
     if not os.path.isdir('StreamTool'):
         print('Installing streamtool...')
@@ -89,7 +100,13 @@ def runner(filename):
         else:
             print(f"{folder_path} does not exist.")
 
-    r = runcommand(rf'nus3audio-rs\target\release\nus3audio.exe -e idsps -- "{filename}"')
+    r = runcommand(rf'nus3audio.exe -e idsps -- "{filename}"')
+    if 'is not recognized as an internal' in r:
+        Shell.rm('nus3audio.exe')
+        Console.error('nus3audio-rs was not installed properly by nus3express.\n'
+                      'Perhaps this was due to an early stoppage.\n'
+                      'Please rerun the program which will reinstall nus3audio-rs.\n')
+
     if not os.path.isdir('wavs'):
         Shell.mkdir('wavs')
 
@@ -130,7 +147,7 @@ def runner(filename):
             Shell.run(f'ffmpeg -i "{input_file}" "{output_file}"')
             # subprocess.run(cmd)
 
-    Shell.run('start mp3s')
+    os.system('start mp3s')
     print('Done, look in mp3s folder.')
 
 
