@@ -24,7 +24,6 @@ def open_file_dialog():
         status_var.set("")
         status_label.update()  # Update the label to clear "Working..."
 
-    exit()
 
 # Create the main application window
 root = tk.Tk()

@@ -48,23 +48,27 @@ def runner(filename):
     # except subprocess.CalledProcessError:
     #     print('Rust not found. Installing rust...')
 
-    r2 = Shell.run('choco --version')
-    if 'not found' in r2:
-        print('Chocolatey not found. Please install chocolatey.')
-        exit()
-    else:
-        print('Chocolatey installed.')
-
     try:
-        r = Shell.run('ffmpeg -h')
+        Shell.run('choco --version')
     except subprocess.CalledProcessError:
-        print('ffmpeg not found. Installing ffmpeg...')
-        r2 = Shell.run('choco install ffmpeg -y')
+        Console.error('Chocolatey not found. Please install chocolatey.\n'
+                      'If you are confused, just install the install.bat file\n'
+                      'provided by right clicking it and Run as Admin.')
+        exit()
+
+    # try:
+    #     r = Shell.run('ffmpeg -h')
+    # except subprocess.CalledProcessError:
+    #     print('ffmpeg not found. Installing ffmpeg...')
+    #     r2 = Shell.run('choco install ffmpeg -y')
+
+    if not os.path.isdir('nus3express'):
+        Shell.mkdir('nus3express')
 
     if not os.path.isfile('nus3audio.exe'):
         print('Downloading nus3audio...')
         url = "https://github.com/jam1garner/nus3audio-rs/releases/download/v1.1.7/nus3audio.exe"
-        file_name = "nus3audio.exe"
+        file_name = "nus3express/nus3audio.exe"
 
         response = requests.get(url)
 
@@ -75,18 +79,18 @@ def runner(filename):
         else:
             print("Failed to download the file.")
 
-    if not os.path.isdir('StreamTool'):
+    if not os.path.isdir('nus3express/StreamTool'):
         print('Installing streamtool...')
         try:
-            Shell.run('git clone https://github.com/ActualMandM/StreamTool.git')
+            Shell.run('cd nus3express && git clone https://github.com/ActualMandM/StreamTool.git')
         except Exception as e:
             print(str(e.output))
         try:
-            Shell.run(fr'cd StreamTool && .\#SETUP.bat')
+            Shell.run(fr'cd nus3express/StreamTool && .\#SETUP.bat')
         except Exception as e:
             print(str(e.output))
 
-    for folder_path in ['mp3s', 'idsps', 'wavs']:
+    for folder_path in ['nus3express/mp3s', 'nus3express/idsps', 'nus3express/wavs']:
         if os.path.exists(folder_path):
             print(f"Deleting {folder_path}...")
             Shell.rmdir(folder_path)
@@ -94,33 +98,33 @@ def runner(filename):
             print(f"{folder_path} does not exist.")
         Shell.mkdir(folder_path)
 
-    r = runcommand(rf'nus3audio.exe -e idsps -- "{filename}"')
+
+    r = runcommand(rf'cd nus3express && nus3audio.exe -e idsps -- "{filename}"')
+
     if 'is not recognized as an internal' in r:
-        Shell.rm('nus3audio.exe')
+        Shell.rm('nus3express/nus3audio.exe')
         Console.error('nus3audio-rs was not installed properly by nus3express.\n'
                       'Perhaps this was due to an early stoppage.\n'
                       'Please rerun the program which will reinstall nus3audio-rs.\n')
 
-    files = os.listdir('idsps')
+    files = os.listdir('nus3express/idsps')
 
     print('Converting idsp to wav...')
     # Loop through the files and print their names
     for file in tqdm(files):
         if '.idsp' in file:
-            inner = fr'.\idsps\{file}'
-            outer = fr'.\wavs\{file.split(".idsp")[0]}.wav'
+            inner = fr'.\nus3express\idsps\{file}'
+            outer = fr'.\nus3express\wavs\{file.split(".idsp")[0]}.wav'
             inner = Shell.map_filename(inner).path
             outer = Shell.map_filename(outer).path
             # print(rf'.\StreamTool\vgaudio.exe {inner} {outer}')
-            r = runcommand(rf'.\StreamTool\vgaudio.exe "{inner}" "{outer}"')
+            r = runcommand(rf'.\nus3express\StreamTool\vgaudio.exe "{inner}" "{outer}"')
 
     print('Converting to mp3s...')
     # Path to the folder containing the input files
-    input_folder = "wavs/"
+    input_folder = rf"nus3express\wavs"
 
-    # Create the "mp3s" folder if it doesn't exist
-    output_folder = "mp3s/"
-    os.makedirs(output_folder, exist_ok=True)
+    output_folder = rf"nus3express\mp3s"
 
     # Iterate through each file in the input folder
     for filename in os.listdir(input_folder):
@@ -138,7 +142,7 @@ def runner(filename):
             Shell.run(f'ffmpeg -i "{input_file}" "{output_file}"')
             # subprocess.run(cmd)
 
-    os.system('start mp3s')
+    os.system(r'start nus3express\mp3s')
     print('Done, look in mp3s folder.')
 
 

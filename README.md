@@ -2,7 +2,19 @@
 
 This tool converts files in nus3audio to mp3s.
 
-## But How Do I Use it?!?!?!?
+## I want to use nus3express RIGHT NOW!
+
+Go to <https://github.com/jpfleischer/nus3express/releases>
+and download install.bat, then right-click it and run as admin.
+This installs chocolatey, python, and git so that you can use nus3express.
+
+Then launch the exe as administrator.
+
+This is a problematic method because Windows Defender does
+not like exe's that not many people use. If you are nervous about
+viruses, then [why don't you scan the files with VirusTotal?](https://www.virustotal.com/gui/file/527a53c6bf5ce45073dcc86df74b62b11a4b6ffb86d56d9224e4527be28950ae/detection)
+
+## I would like to compile nus3express on my own.
 
 You need: 
 * chocolatey
