@@ -46,11 +46,13 @@ python nus3express.py
 ## I want to update my nus3express!
 
 Assuming you downloaded it to your Downloads folder, as above, do the
-following in Powershell as admin:
+following in **Powershell as administrator**:
 
 ```bash
-cd ~/Downloads/nus3express
-git pull
+cd ~/Downloads
+Remove-Item -Recurse -Force nus3express
+git clone https://github.com/jpfleischer/nus3express.git
+cd nus3express 
 pip install -r requirements.txt
 python nus3express.py
 ```
