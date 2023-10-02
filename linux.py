@@ -17,17 +17,19 @@ def install_vgmstream():
     run_command("chmod +x vgmstream")
     run_command("sudo mv vgmstream /usr/bin/")
     run_command("sudo apt-get -y update")
-    run_command("sudo apt-get install gcc g++ make build-essential git cmake")
-    run_command("sudo apt-get install libmpg123-dev libvorbis-dev libspeex-dev")
-    run_command("sudo apt-get install libavformat-dev libavcodec-dev libavutil-dev libswresample-dev")
-    run_command("sudo apt-get install yasm libopus-dev")
-    run_command("sudo apt-get install -y libao-dev audacious-dev")
+    run_command("sudo apt-get install -qq gcc g++ make build-essential git cmake")
+    run_command("sudo apt-get install -qq libmpg123-dev libvorbis-dev libspeex-dev")
+    run_command("sudo apt-get install -qq libavformat-dev libavcodec-dev libavutil-dev libswresample-dev")
+    run_command("sudo apt-get install -qq yasm libopus-dev")
+    run_command("sudo apt-get install -qq -y libao-dev audacious-dev")
 
 def check_vgmstream():
     if not os.path.isfile("/usr/bin/vgmstream"):
         install_vgmstream()
 
 def convert_idsp_to_wav(input_file, output_file):
+    check_vgmstream()
+
     if os.path.isfile(input_file) and input_file.lower().endswith(".idsp"):
         run_command(f'vgmstream -o "{output_file}" "{input_file}"')
         print('The file `' + sys.argv[1] + '` has been converted to WAV format.')
