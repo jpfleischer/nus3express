@@ -50,7 +50,7 @@ def runner(filename):
 
     try:
         Shell.run('choco --version')
-    except subprocess.CalledProcessError:
+    except RuntimeError:
         Console.error('Chocolatey not found. Please install chocolatey.\n'
                       'If you are confused, just install the install.bat file\n'
                       'provided by right clicking it and Run as Admin.')
@@ -58,7 +58,7 @@ def runner(filename):
 
     # try:
     #     r = Shell.run('ffmpeg -h')
-    # except subprocess.CalledProcessError:
+    # except RuntimeError:
     #     print('ffmpeg not found. Installing ffmpeg...')
     #     r2 = Shell.run('choco install ffmpeg -y')
 
