@@ -72,6 +72,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{steps.create_release.outputs.upload_url}}
-          asset_path: dist/nus3express.exe
-          asset_name: nus3express.exe
-          asset_content_type: application/zip
+          asset_path: dist/nus3express
+          asset_name: nus3express
+          asset_content_type: application/octet-stream
