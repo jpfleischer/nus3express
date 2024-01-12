@@ -82,6 +82,27 @@ def runner(filename):
         Console.info('Installing streamtool...')
         runcommand('cd nus3-program && git clone https://github.com/ActualMandM/StreamTool.git')
         runcommand(fr'cd nus3-program/StreamTool && .\#SETUP.bat')
+
+    vg_name = r".\nus3-program\StreamTool\vgmstream.exe"
+
+    if not os.path.isfile('nus3-program/StreamTool/vgmstream.exe'):
+        Console.warning('Your setup.bat failed')
+        Console.warning(r"...F@$% it, we're doing it live!")
+        Console.warning('Downloading vgmstream...')
+        url = "https://github.com/vgmstream/vgmstream-releases/releases/download/nightly/vgmstream-win64.zip"
+        # download file
+        file_name = "nus3-program/vgmstream.zip"
+        response = requests.get(url)
+        if response.status_code == 200:
+            with open(file_name, 'wb') as file:
+                file.write(response.content)
+            Console.ok(f"Downloaded {file_name} successfully.")
+        else:
+            Console.error("Failed to download the file.")
+        # unzip file
+        Console.info('Unzipping vgmstream...')
+        Shell.unzip(file_name, r"nus3-program\vgmstream-win64")
+        vg_name = r'nus3-program\vgmstream-win64\vgmstream-cli.exe'
         
     for folder_path in ['nus3-program/mp3s', 'nus3-program/idsps', 'nus3-program/wavs']:
         if os.path.exists(folder_path):
@@ -118,7 +139,7 @@ def runner(filename):
             inner = Shell.map_filename(inner).path
             outer = Shell.map_filename(outer).path
             # print(rf'.\StreamTool\vgaudio.exe {inner} {outer}')
-            r = runcommand(rf'.\nus3-program\StreamTool\vgmstream.exe "{inner}" -o "{outer}"')
+            r = runcommand(rf'{vg_name} "{inner}" -o "{outer}"')
 
     Console.info('Converting to mp3s...')
     # Path to the folder containing the input files
