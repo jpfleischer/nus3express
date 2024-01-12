@@ -6,7 +6,7 @@ on:
 
 jobs:
   build-windows:
-    runs-on: windows-2019
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v1
@@ -27,16 +27,34 @@ jobs:
           name: windows_nus3express
           path: dist/nus3express.exe
 
+      - name: Fetch latest release
+        id: latest_release
+        run: |
+          LATEST_RELEASE_TAG=$(curl --silent "https://api.github.com/repos/$GITHUB_REPOSITORY/releases/latest" | jq -r .tag_name)
+          echo "::set-output name=tag::${LATEST_RELEASE_TAG}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Increment version
+        id: increment_version
+        run: |
+          LATEST_RELEASE_TAG=${{ steps.latest_release.outputs.tag }}
+          VERSION_NUM=${LATEST_RELEASE_TAG#v}  # remove the 'v' prefix
+          IFS='.' read -ra VERSION_PARTS <<< "$VERSION_NUM"  # split into array
+          ((VERSION_PARTS[2]++))  # increment the patch version
+          NEW_VERSION="${VERSION_PARTS[0]}.${VERSION_PARTS[1]}.${VERSION_PARTS[2]}"
+          echo "::set-output name=version::v${NEW_VERSION}"
+
       - name: create release
         id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.event.head_commit.message }}
-          release_name: ${{ github.event.head_commit.message }}
+          tag_name: ${{ steps.increment_version.outputs.version }}
+          release_name: Release ${{ steps.increment_version.outputs.version }}
           body: |
-            Test Release v1.0.0
+            Test Release ${{ steps.increment_version.outputs.version }}
           draft: false
           prerelease: false
       - name: Upload Release Asset
