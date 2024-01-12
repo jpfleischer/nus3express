@@ -78,14 +78,14 @@ def runner(filename):
         else:
             Console.error("Failed to download the file.")
 
-    if not os.path.isdir('nus3-program/StreamTool'):
+    vg_name = r".\nus3-program\StreamTool\vgmstream.exe"
+    
+    if not os.path.isfile(vg_name):
         Console.info('Installing streamtool...')
         runcommand('cd nus3-program && git clone https://github.com/ActualMandM/StreamTool.git')
         runcommand(fr'cd nus3-program/StreamTool && .\#SETUP.bat')
 
-    vg_name = r".\nus3-program\StreamTool\vgmstream.exe"
-
-    if not os.path.isfile('nus3-program/StreamTool/vgmstream.exe'):
+    if not os.path.isfile(vg_name):
         Console.warning('Your setup.bat failed')
         Console.warning(r"...F@$% it, we're doing it live!")
         Console.warning('Downloading vgmstream...')
@@ -132,7 +132,14 @@ def runner(filename):
             inner = Shell.map_filename(inner).path
             outer = Shell.map_filename(outer).path
             # print(rf'.\StreamTool\vgaudio.exe {inner} {outer}')
-            r = runcommand(rf'.\nus3-program\StreamTool\vgaudio.exe "{inner}" "{outer}"')
+            vga = rf'.\nus3-program\StreamTool\vgaudio.exe'
+            if not os.path.isfile(vga):
+                Shell.warning("WE'RE DOIN' IT LIVE, F(*% IT!")
+                Shell.download("https://github.com/Thealexbarney/VGAudio/releases/download/v2.2.1/VGAudioCli.exe",
+                               vga)
+                
+            
+            r = runcommand(rf'{vga} "{inner}" "{outer}"')
         elif '.lopus' in file:
             inner = fr'.\nus3-program\idsps\{file}'
             outer = fr'.\nus3-program\wavs\{file.split(".lopus")[0]}.wav'
