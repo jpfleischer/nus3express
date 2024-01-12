@@ -45,7 +45,7 @@ jobs:
           VERSION_PARTS[2]=$((VERSION_PARTS[2] + 1))
 
           NEW_VERSION="${VERSION_PARTS[0]}.${VERSION_PARTS[1]}.${VERSION_PARTS[2]}"
-          echo "::set-output name=version::v${NEW_VERSION}"
+          echo "version=v${NEW_VERSION}" >> $GITHUB_ENV
         shell: bash
       - name: create release
         id: create_release
@@ -53,10 +53,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ steps.increment_version.outputs.version }}
-          release_name: Release ${{ steps.increment_version.outputs.version }}
+          tag_name: ${{ env.version }}
+          release_name: Release ${{ env.version }}
           body: |
-            Test Release ${{ steps.increment_version.outputs.version }}
+            Test Release ${{ env.version }}
           draft: false
           prerelease: false
       - name: Upload Release Asset
