@@ -26,15 +26,9 @@ jobs:
         with:
           name: windows_nus3express
           path: dist/nus3express.exe
-
-      - name: Fetch latest release
-        id: latest_release
+      - name: Install curl and jq
         run: |
-          LATEST_RELEASE_TAG=$(curl --silent "https://api.github.com/repos/$GITHUB_REPOSITORY/releases/latest" | jq -r .tag_name)
-          echo "::set-output name=tag::${LATEST_RELEASE_TAG}"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
+          choco install curl jq -y
       - name: Increment version
         id: increment_version
         run: |
@@ -52,7 +46,7 @@ jobs:
 
           NEW_VERSION="${VERSION_PARTS[0]}.${VERSION_PARTS[1]}.${VERSION_PARTS[2]}"
           echo "::set-output name=version::v${NEW_VERSION}"
-
+        shell: bash
       - name: create release
         id: create_release
         uses: actions/create-release@v1
