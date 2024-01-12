@@ -38,7 +38,7 @@ jobs:
       - name: Increment version
         id: increment_version
         run: |
-          LATEST_RELEASE_TAG=${{ steps.latest_release.outputs.tag }}
+          LATEST_RELEASE_TAG=v1.2
           VERSION_NUM=${LATEST_RELEASE_TAG#v}  # remove the 'v' prefix
           IFS='.' read -ra VERSION_PARTS <<< "$VERSION_NUM"  # split into array
 
@@ -47,7 +47,9 @@ jobs:
             VERSION_PARTS+=('0')
           fi
 
-          ((VERSION_PARTS[2]++))  # increment the patch version
+          # Increment the patch version
+          VERSION_PARTS[2]=$((VERSION_PARTS[2] + 1))
+
           NEW_VERSION="${VERSION_PARTS[0]}.${VERSION_PARTS[1]}.${VERSION_PARTS[2]}"
           echo "::set-output name=version::v${NEW_VERSION}"
 
