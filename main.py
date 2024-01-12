@@ -51,10 +51,9 @@ def runner(filename):
     try:
         Shell.run('choco --version')
     except RuntimeError:
-        Console.error('Chocolatey not found. Please install chocolatey.\n'
-                      'If you are confused, just install the install.bat file\n'
-                      'provided by right clicking it and Run as Admin.')
-        exit()
+        Console.error('Oh no! chocolatey not found. installing...')
+        Shell.install_chocolatey()
+        Shell.run('choco install git ffmpeg -y')
 
     # try:
     #     r = Shell.run('ffmpeg -h')
