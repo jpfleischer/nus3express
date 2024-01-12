@@ -61,13 +61,13 @@ def runner(filename):
     #     print('ffmpeg not found. Installing ffmpeg...')
     #     r2 = Shell.run('choco install ffmpeg -y')
 
-    if not os.path.isdir('program'):
-        Shell.mkdir('program')
+    if not os.path.isdir('nus3-program'):
+        Shell.mkdir('nus3-program')
 
     if not os.path.isfile('nus3audio.exe'):
         Console.info('Downloading nus3audio...')
         url = "https://github.com/jam1garner/nus3audio-rs/releases/download/v1.1.7/nus3audio.exe"
-        file_name = "program/nus3audio.exe"
+        file_name = "nus3-program/nus3audio.exe"
 
         response = requests.get(url)
 
@@ -78,12 +78,12 @@ def runner(filename):
         else:
             Console.error("Failed to download the file.")
 
-    if not os.path.isdir('program/StreamTool'):
+    if not os.path.isdir('nus3-program/StreamTool'):
         Console.info('Installing streamtool...')
-        runcommand('cd program && git clone https://github.com/ActualMandM/StreamTool.git')
-        runcommand(fr'cd program/StreamTool && .\#SETUP.bat')
+        runcommand('cd nus3-program && git clone https://github.com/ActualMandM/StreamTool.git')
+        runcommand(fr'cd nus3-program/StreamTool && .\#SETUP.bat')
         
-    for folder_path in ['program/mp3s', 'program/idsps', 'program/wavs']:
+    for folder_path in ['nus3-program/mp3s', 'nus3-program/idsps', 'nus3-program/wavs']:
         if os.path.exists(folder_path):
             Console.info(f"Deleting {folder_path} probably from a previous run...")
             Shell.rmdir(folder_path)
@@ -92,39 +92,39 @@ def runner(filename):
         Shell.mkdir(folder_path)
 
 
-    r = runcommand(rf'cd program && nus3audio.exe -e idsps -- "{filename}"')
+    r = runcommand(rf'cd nus3-program && nus3audio.exe -e idsps -- "{filename}"')
 
     if 'is not recognized as an internal' in r:
-        Shell.rm('program/nus3audio.exe')
+        Shell.rm('nus3-program/nus3audio.exe')
         Console.error('nus3audio-rs was not installed properly by nus3express.\n'
                       'Perhaps this was due to an early stoppage.\n'
                       'Please rerun the program which will reinstall nus3audio-rs.\n')
 
-    files = os.listdir('program/idsps')
+    files = os.listdir('nus3-program/idsps')
 
     Console.info('Converting idsp to wav...')
     # Loop through the files and print their names
     for file in tqdm(files):
         if '.idsp' in file:
-            inner = fr'.\program\idsps\{file}'
-            outer = fr'.\program\wavs\{file.split(".idsp")[0]}.wav'
+            inner = fr'.\nus3-program\idsps\{file}'
+            outer = fr'.\nus3-program\wavs\{file.split(".idsp")[0]}.wav'
             inner = Shell.map_filename(inner).path
             outer = Shell.map_filename(outer).path
             # print(rf'.\StreamTool\vgaudio.exe {inner} {outer}')
-            r = runcommand(rf'.\program\StreamTool\vgaudio.exe "{inner}" "{outer}"')
+            r = runcommand(rf'.\nus3-program\StreamTool\vgaudio.exe "{inner}" "{outer}"')
         elif '.lopus' in file:
-            inner = fr'.\program\idsps\{file}'
-            outer = fr'.\program\wavs\{file.split(".lopus")[0]}.wav'
+            inner = fr'.\nus3-program\idsps\{file}'
+            outer = fr'.\nus3-program\wavs\{file.split(".lopus")[0]}.wav'
             inner = Shell.map_filename(inner).path
             outer = Shell.map_filename(outer).path
             # print(rf'.\StreamTool\vgaudio.exe {inner} {outer}')
-            r = runcommand(rf'.\program\StreamTool\vgmstream.exe "{inner}" -o "{outer}"')
+            r = runcommand(rf'.\nus3-program\StreamTool\vgmstream.exe "{inner}" -o "{outer}"')
 
     Console.info('Converting to mp3s...')
     # Path to the folder containing the input files
-    input_folder = rf"program\wavs"
+    input_folder = rf"nus3-program\wavs"
 
-    output_folder = rf"program\mp3s"
+    output_folder = rf"nus3-program\mp3s"
 
     # Iterate through each file in the input folder
     for filename in os.listdir(input_folder):
@@ -142,7 +142,7 @@ def runner(filename):
             runcommand(f'ffmpeg -i "{input_file}" "{output_file}"')
             # subprocess.run(cmd)
 
-    os.system(r'start program\mp3s')
+    os.system(r'start nus3-program\mp3s')
     Console.ok('Done, look in mp3s folder.')
 
 
