@@ -5,7 +5,7 @@ on:
 #    branches: master
 
 jobs:
-  build-windows:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -41,6 +41,12 @@ jobs:
           LATEST_RELEASE_TAG=${{ steps.latest_release.outputs.tag }}
           VERSION_NUM=${LATEST_RELEASE_TAG#v}  # remove the 'v' prefix
           IFS='.' read -ra VERSION_PARTS <<< "$VERSION_NUM"  # split into array
+
+          # Check if patch version exists, if not add it
+          if [ ${#VERSION_PARTS[@]} -eq 2 ]; then
+            VERSION_PARTS+=('0')
+          fi
+
           ((VERSION_PARTS[2]++))  # increment the patch version
           NEW_VERSION="${VERSION_PARTS[0]}.${VERSION_PARTS[1]}.${VERSION_PARTS[2]}"
           echo "::set-output name=version::v${NEW_VERSION}"
