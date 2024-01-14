@@ -1,10 +1,8 @@
 from tqdm import tqdm
-import sys
 import requests
 import os
 from cloudmesh.common.Shell import Shell
 from cloudmesh.common.console import Console
-import subprocess
 from cloudmesh.common.systeminfo import os_is_windows
 
 def runner(filename):
@@ -47,14 +45,39 @@ def runner(filename):
     #     r = Shell.run('rustc --version')
     # except subprocess.CalledProcessError:
     #     print('Rust not found. Installing rust...')
+    
+    # check for git
+    git = ffmpeg = False
+    try:
+        Shell.run('git --version')
+        git = True
+    except RuntimeError:
+        pass
 
     try:
-        Shell.run('choco --version')
+        Shell.run('ffmpeg -version')
+        ffmpeg = True
     except RuntimeError:
-        Console.error('Oh no! chocolatey not found. installing...')
-        Shell.install_chocolatey()
-        Shell.run('choco install git ffmpeg -y')
+        pass
 
+    if not git or not ffmpeg:
+        try:
+            Shell.run('choco --version')
+        except RuntimeError:
+            Console.error('Oh no! chocolatey not found. installing...')
+            Shell.install_chocolatey()
+
+            Console.info('Installing git and/or ffmpeg...')
+            if not git:
+                try:
+                    Shell.run('choco install git -y')
+                except RuntimeError:
+                    pass
+            if not ffmpeg:
+                try:
+                    Shell.run('choco install ffmpeg -y')
+                except RuntimeError:
+                    pass
     # try:
     #     r = Shell.run('ffmpeg -h')
     # except RuntimeError:

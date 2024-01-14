@@ -1,5 +1,5 @@
 package:
-	-rm -rf build dist
+	-rm -rf build dist nusenv
 	python -m venv nusenv
 	. nusenv/Scripts/activate && pip install -r requirements.txt && \
 		pip install pyinstaller -U && \
